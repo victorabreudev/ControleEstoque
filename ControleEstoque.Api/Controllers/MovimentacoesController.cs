@@ -42,4 +42,12 @@ public class MovimentacoesController : ControllerBase
         var movimentacoes = await _movimentacaoService.ObterPorProdutoIdAsync(produtoId);
         return Ok(movimentacoes);
     }
+
+    [HttpGet("historico")]
+    public async Task<IActionResult> Historico()
+    {
+        var historico = await _movimentacaoService.ObterHistoricoAsync();
+
+        return Ok(historico);
+    }
 }

@@ -1,7 +1,11 @@
-﻿using Dapper;
-using ControleEstoque.Api.Domain.Entities;
+﻿using ControleEstoque.Api.Domain.Entities;
+using ControleEstoque.Api.DTOs.Movimentacao;
 using ControleEstoque.Api.Infrastructure.Data;
 using ControleEstoque.Api.Infrastructure.Repositories.Interfaces;
+using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
+using static ControleEstoque.Api.DTOs.Movimentacao.HistoricoMovimentacaoRequest;
 
 namespace ControleEstoque.Api.Infrastructure.Repositories;
 
@@ -46,5 +50,25 @@ public class MovimentacaoRepository : IMovimentacaoRepository
 
         using var connection = _context.CreateConnection();
         return await connection.QueryAsync<MovimentacaoEstoque>(sql, new { ProdutoId = produtoId });
+    }
+
+    public async Task<IEnumerable<HistoricoMovimentacaoResponse>> ObterHistoricoAsync()
+    {
+        const string sql = @"
+            SELECT
+                m.Id,
+                p.Nome AS Produto,
+                c.Nome AS Categoria,
+                m.Quantidade,
+                m.TipoMovimentacao,
+                m.DataMovimentacao
+            FROM MovimentacaoEstoque m
+            INNER JOIN Produto p
+                ON p.Id = m.ProdutoId
+            INNER JOIN Categoria c
+                ON c.Id = p.CategoriaId
+            ORDER BY m.DataMovimentacao DESC";
+        using var connection = _context.CreateConnection();
+        return await connection.QueryAsync<HistoricoMovimentacaoResponse>(sql);
     }
 }

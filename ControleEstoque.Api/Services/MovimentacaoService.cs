@@ -3,6 +3,7 @@ using ControleEstoque.Api.Domain.Enums;
 using ControleEstoque.Api.DTOs.Movimentacao;
 using ControleEstoque.Api.Infrastructure.Repositories.Interfaces;
 using ControleEstoque.Api.Services.Interfaces;
+using static ControleEstoque.Api.DTOs.Movimentacao.HistoricoMovimentacaoRequest;
 
 namespace ControleEstoque.Api.Services;
 
@@ -75,4 +76,11 @@ public class MovimentacaoService : IMovimentacaoService
 
     public async Task<IEnumerable<MovimentacaoEstoque>> ObterPorProdutoIdAsync(int produtoId)
         => await _movimentacaoRepository.ObterPorProdutoIdAsync(produtoId);
+
+    public async Task<IEnumerable<HistoricoMovimentacaoResponse>> ObterHistoricoAsync()
+    {
+        var historico = await _movimentacaoRepository.ObterHistoricoAsync();
+
+        return historico.ToList();
+    }
 }
