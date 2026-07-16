@@ -10,4 +10,6 @@ public interface IProdutoService
     Task<int> CriarAsync(CriarProdutoRequest request);
     Task<bool> AtualizarAsync(int id, AtualizarProdutoRequest request);
     Task<bool> DeletarAsync(int id);
+    Task<List<ProdutoEstoqueBaixoResponse>> ObterEstoqueBaixoAsync(int quantidadeMinima);
+
 }

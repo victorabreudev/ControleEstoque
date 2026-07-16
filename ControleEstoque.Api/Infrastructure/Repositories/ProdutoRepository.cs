@@ -1,7 +1,10 @@
-﻿using Dapper;
-using ControleEstoque.Api.Domain.Entities;
+﻿using ControleEstoque.Api.Domain.Entities;
+using ControleEstoque.Api.DTOs.Produto;
 using ControleEstoque.Api.Infrastructure.Data;
 using ControleEstoque.Api.Infrastructure.Repositories.Interfaces;
+using Dapper;
+using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace ControleEstoque.Api.Infrastructure.Repositories;
 
@@ -86,5 +89,23 @@ public class ProdutoRepository : IProdutoRepository
         });
 
         return linhasAfetadas > 0;
+    }
+    public async Task<IEnumerable<ProdutoEstoqueBaixoResponse>> ObterEstoqueBaixoAsync(int quantidadeMinima)
+    {
+        using var connection = _context.CreateConnection();
+        var sql = @"
+        SELECT
+            p.Id,
+            p.Nome,
+            c.Nome AS Categoria,
+            p.QuantidadeEstoque
+        FROM Produto p
+        INNER JOIN Categoria c
+            ON c.Id = p.CategoriaId
+        WHERE p.QuantidadeEstoque <= @QuantidadeMinima
+        ORDER BY p.QuantidadeEstoque ASC";
+
+        return await connection.QueryAsync<ProdutoEstoqueBaixoResponse>(
+            sql,new { QuantidadeMinima = quantidadeMinima });
     }
 }
