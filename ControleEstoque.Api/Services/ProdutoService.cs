@@ -2,6 +2,7 @@
 using ControleEstoque.Api.DTOs.Produto;
 using ControleEstoque.Api.Infrastructure.Repositories.Interfaces;
 using ControleEstoque.Api.Services.Interfaces;
+using Microsoft.AspNetCore.Http.HttpResults;
 
 namespace ControleEstoque.Api.Services;
 
@@ -84,5 +85,12 @@ public class ProdutoService : IProdutoService
             throw new KeyNotFoundException("Produto não encontrado.");
 
         return await _produtoRepository.DeletarAsync(id);
+    }
+
+    public async Task<List<ProdutoEstoqueBaixoResponse>> ObterEstoqueBaixoAsync(int quantidadeMinima)
+    {
+        var produtos = await _produtoRepository.ObterEstoqueBaixoAsync(quantidadeMinima);
+
+        return produtos.ToList();
     }
 }

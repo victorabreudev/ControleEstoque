@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ControleEstoque.Api.DTOs.Produto;
 using ControleEstoque.Api.Services.Interfaces;
+using ControleEstoque.Api.Infrastructure.Repositories;
 
 namespace ControleEstoque.Api.Controllers;
 
@@ -51,5 +52,13 @@ public class ProdutosController : ControllerBase
     {
         var deletado = await _produtoService.DeletarAsync(id);
         return Ok(new { sucesso = deletado });
+    }
+    [HttpGet("estoque-baixo")]
+    public async Task<IActionResult> ObterEstoqueBaixo(
+    [FromQuery] int quantidadeMinima = 10)
+    {
+        var produtos = await _produtoService.ObterEstoqueBaixoAsync(quantidadeMinima);
+
+        return Ok(produtos);
     }
 }
